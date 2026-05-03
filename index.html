@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
-    :root { --primary: #10B981; --primary-dark: #059669; --bg-color: #F3F4F6; --card-bg: #FFFFFF; --text-main: #1F2937; --text-muted: #6B7280; --border: #E5E7EB; }
+    :root { --primary: #10B981; --primary-dark: #059669; --bg-color: #F3F4F6; --card-bg: #FFFFFF; --text-main: #1F2937; --text-muted: #6B7280; --border: #E5E7EB; --danger: #EF4444; }
     * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
     body { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-main); padding-top: 60px; padding-bottom: 80px; }
     
@@ -31,7 +31,6 @@
     .combo-list { display: none; position: absolute; top: 100%; left: 0; width: 100%; max-height: 200px; overflow-y: auto; background: white; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 50; margin-top: 4px; }
     .combo-item { padding: 12px 15px; font-size: 14px; border-bottom: 1px solid #F3F4F6; cursor: pointer; }
     .combo-item:hover { background: #F0FDF4; color: var(--primary-dark); font-weight: 600; }
-    .combo-item:last-child { border-bottom: none; }
     
     .result-box { display: none; margin-top: 10px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
     .result-head { background: var(--primary); color: white; padding: 12px; font-weight: 600; text-align: center; }
@@ -40,30 +39,44 @@
     .data-item.full-width { grid-column: span 2; background: #F8FAFC; border-color: #E2E8F0; }
     .d-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; }
     .d-value { font-size: 16px; font-weight: bold; color: var(--text-main); margin-top: 4px; display: block; }
-    .d-value.text-sm { font-size: 14px; }
     
     .sync-time { font-size: 11px; color: var(--text-muted); text-align: right; margin-bottom: 10px; font-style: italic; }
     .progress-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
     .progress-bg { height: 12px; background: #E5E7EB; border-radius: 10px; overflow: hidden; }
     .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 1s ease-in-out; }
-    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; } /* Diubah jadi 3 kolom */
     .stat-box { text-align: center; padding: 12px; background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px; }
     .stat-num { font-size: 20px; font-weight: bold; color: var(--primary-dark); }
-    .stat-text { font-size: 11px; color: #065F46; text-transform: uppercase; margin-top: 4px; }
+    .stat-text { font-size: 10px; color: #065F46; text-transform: uppercase; margin-top: 4px; }
+    
+    /* Box Khusus Resign */
+    .stat-box.danger { background: #FEF2F2; border-color: #FECACA; }
+    .stat-box.danger .stat-num { color: #DC2626; }
+    .stat-box.danger .stat-text { color: #991B1B; }
+
+    /* List Manajemen Siswa */
+    .manage-list { display: flex; flex-direction: column; gap: 12px; }
+    .manage-item { background: #FAFAFA; border: 1px solid var(--border); padding: 15px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px; }
+    .m-name { font-size: 15px; font-weight: bold; color: var(--primary-dark); margin: 0; }
+    .m-sub { font-size: 12px; color: var(--text-muted); margin: 0; }
+    .status-select { padding: 8px; border-radius: 6px; font-size: 13px; font-weight: bold; border: 1px solid var(--border); outline: none; margin-bottom:0; }
+    .status-select.resign { color: #DC2626; background: #FEF2F2; border-color: #FECACA; }
     
     .chart-container { position: relative; height: 230px; width: 100%; margin-top: 15px;}
     .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; }
     
     .btn-action { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
     .btn-export { background: var(--primary); color: white; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2); }
-    .btn-action:active { transform: scale(0.98); }
     
     .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card-bg); display: flex; justify-content: space-around; box-shadow: 0 -2px 10px rgba(0,0,0,0.08); padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
-    .nav-item { flex: 1; text-align: center; padding: 12px 0; color: var(--text-muted); font-size: 11px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-    .nav-item i { display: block; font-size: 20px; margin-bottom: 4px; }
+    .nav-item { flex: 1; text-align: center; padding: 10px 0; color: var(--text-muted); font-size: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .nav-item i { display: block; font-size: 18px; margin-bottom: 4px; }
     .nav-item.active { color: var(--primary); }
     
     #loader { text-align: center; padding: 50px 20px; color: var(--text-muted); font-weight: 600; }
+    
+    /* Overlay Loading saat ganti status */
+    #action-loader { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(255,255,255,0.8); z-index: 999; justify-content: center; align-items: center; flex-direction: column; color: var(--primary-dark); font-weight: bold; }
   </style>
 </head>
 <body>
@@ -73,23 +86,26 @@
     <button class="btn-refresh" onclick="refreshData()" title="Muat Ulang Data"><i class="fas fa-sync-alt"></i></button>
   </div>
 
-  <div id="loader">
-    <i class="fas fa-spinner fa-spin fa-2x"></i><br><br><span id="loader-text">Menarik Data Terbaru...</span>
-  </div>
+  <div id="loader"><i class="fas fa-spinner fa-spin fa-2x"></i><br><br><span id="loader-text">Menarik Data Terbaru...</span></div>
+  
+  <div id="action-loader"><i class="fas fa-circle-notch fa-spin fa-3x"></i><br><br>Memperbarui Status...</div>
 
   <div class="main-container" id="app-content" style="display:none;">
     
-    <!-- VIEW 1: DASHBOARD -->
+    <!-- TAB 1: DASHBOARD -->
     <div id="view-dash" class="view-section">
       <div class="card">
         <h3 class="card-title"><i class="fas fa-tasks"></i> Ringkasan Pendataan</h3>
         <div class="sync-time" id="last-sync">Terakhir diperbarui: -</div>
-        <div class="progress-header"><span>Siswa Tersinkronisasi</span><span id="prog-text">0 / 65</span></div>
+        <div class="progress-header"><span>Siswa Tersinkronisasi</span><span id="prog-text">0 / 0</span></div>
         <div class="progress-bg"><div class="progress-fill" id="prog-bar"></div></div>
+        
         <div class="stat-grid">
-          <div class="stat-box"><div class="stat-num" id="stat-l">0</div><div class="stat-text">Laki - Laki</div></div>
+          <div class="stat-box"><div class="stat-num" id="stat-l">0</div><div class="stat-text">Laki-Laki</div></div>
           <div class="stat-box"><div class="stat-num" id="stat-p">0</div><div class="stat-text">Perempuan</div></div>
+          <div class="stat-box danger"><div class="stat-num" id="stat-resign">0</div><div class="stat-text">Mundur</div></div>
         </div>
+        <p style="font-size: 11px; text-align:center; color: var(--text-muted); margin-top: 15px;">*Data siswa mengundurkan diri otomatis dikeluarkan dari kuota dan tidak ikut direkap.</p>
       </div>
 
       <div class="card">
@@ -99,16 +115,16 @@
       </div>
 
       <div class="card">
-        <h3 class="card-title"><i class="fas fa-tshirt"></i> Distribusi Atasan (Grafik)</h3>
+        <h3 class="card-title"><i class="fas fa-tshirt"></i> Distribusi Atasan</h3>
         <div class="chart-container"><canvas id="chartAtasan"></canvas></div>
       </div>
       <div class="card">
-        <h3 class="card-title"><i class="fas fa-socks"></i> Distribusi Bawahan (Grafik)</h3>
+        <h3 class="card-title"><i class="fas fa-socks"></i> Distribusi Bawahan</h3>
         <div class="chart-container"><canvas id="chartBawahan"></canvas></div>
       </div>
     </div>
 
-    <!-- VIEW 2: PENCARIAN -->
+    <!-- TAB 2: PENCARIAN -->
     <div id="view-cek" class="view-section" style="display:none;">
       <div class="card">
         <h3 class="card-title"><i class="fas fa-search"></i> Pencarian Pintar</h3>
@@ -139,12 +155,26 @@
       </div>
     </div>
 
-    <!-- VIEW 3: CETAK PDF -->
+    <!-- TAB 3: MANAJEMEN SISWA (BARU) -->
+    <div id="view-manajemen" class="view-section" style="display:none;">
+      <div class="card">
+        <h3 class="card-title"><i class="fas fa-users-cog"></i> Kelola Status Pendaftaran</h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Ubah status siswa di sini. Jika diatur menjadi "Mengundurkan Diri", data otomatis ditarik dari rekap.</p>
+        
+        <input type="text" id="searchManage" class="combo-input" placeholder="Cari cepat nama siswa..." onkeyup="renderManageList()">
+        
+        <div class="manage-list" id="manage-list-container">
+          <!-- List siswa di-generate dari JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: EKSPOR PDF -->
     <div id="view-export" class="view-section" style="display:none;">
       <div class="card" style="text-align: center; padding: 40px 20px;">
         <i class="fas fa-print fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
         <h3 style="margin: 0 0 10px 0;">Cetak Laporan (PDF)</h3>
-        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 25px;">Fitur ini akan membuka <b>Print Preview</b> yang berisi <b>Tabel Rekapitulasi</b> di halaman pertama, disusul <b>Daftar Rincian Siswa</b>.</p>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 25px;">Data siswa yang Mengundurkan Diri telah dikecualikan dari cetakan ini.</p>
         <button class="btn-action btn-export" onclick="exportDataPDF()"><i class="fas fa-file-pdf"></i> Buka Print Preview</button>
       </div>
     </div>
@@ -153,63 +183,46 @@
 
   <div class="bottom-nav" id="bottomNav" style="display:none;">
     <div class="nav-item active" onclick="switchMenu('view-dash', this)"><i class="fas fa-chart-pie"></i><span>Ringkasan</span></div>
-    <div class="nav-item" onclick="switchMenu('view-cek', this)"><i class="fas fa-user-check"></i><span>Pencarian</span></div>
-    <div class="nav-item" onclick="switchMenu('view-export', this)"><i class="fas fa-print"></i><span>Cetak PDF</span></div>
+    <div class="nav-item" onclick="switchMenu('view-cek', this)"><i class="fas fa-search"></i><span>Pencarian</span></div>
+    <div class="nav-item" onclick="switchMenu('view-manajemen', this)"><i class="fas fa-user-edit"></i><span>Status</span></div>
+    <div class="nav-item" onclick="switchMenu('view-export', this)"><i class="fas fa-print"></i><span>Cetak</span></div>
   </div>
 
   <script>
     // =========================================================
-    // WAJIB GANTI LINK DI BAWAH INI DENGAN LINK APPS SCRIPT BARU
+    // WAJIB GANTI LINK DI BAWAH INI
     // =========================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzXVBKde77VjBjGqX8mhSnRg5IxOF-x7VU3T5MyxkbB34sPZvpX52oxYGP8weQ6dLNT/exec"; 
     
     Chart.register(ChartDataLabels);
     let globalData = [];
-    const TOTAL_KUOTA = 65; 
+    let activeData = []; // Data siswa yang TIDAK mengundurkan diri
     let chartAtasanInstance = null;
     let chartBawahanInstance = null;
-
-    function generateRekapTableHTML(title, keyObj) {
-      const sizes = [...new Set(globalData.map(s => s[keyObj]).filter(s => s !== "-"))];
-      const sizeOrder = {"S":1, "M":2, "L":3, "XL":4, "XXL":5, "3XL":6, "4XL":7};
-      sizes.sort((a, b) => {
-        let valA = sizeOrder[a.toUpperCase()] || 99;
-        let valB = sizeOrder[b.toUpperCase()] || 99;
-        if (valA === valB) return a.localeCompare(b);
-        return valA - valB;
-      });
-
-      if (sizes.length === 0) return '';
-
-      let html = `<h4 style="text-align:center; margin-top: 0; margin-bottom: 10px; font-family: sans-serif; color: #374151;">Rekap ${title}</h4>`;
-      html += `<table style="width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 12px; font-family: sans-serif;">`;
-      html += `<thead><tr><th style="border: 1px solid #1F2937; padding: 8px; background-color: #E5E7EB; text-align: left;">Jenis Kelamin</th>`;
-      sizes.forEach(sz => { html += `<th style="border: 1px solid #1F2937; padding: 8px; background-color: #E5E7EB; text-align: center; width: 45px;">${sz}</th>`; });
-      html += `</tr></thead><tbody><tr><td style="border: 1px solid #1F2937; padding: 8px; text-align: left; font-weight: bold;">Laki - Laki</td>`;
-      sizes.forEach(sz => { const count = globalData.filter(s => s.gender === "Laki - Laki" && s[keyObj] === sz).length; html += `<td style="border: 1px solid #1F2937; padding: 8px; text-align: center;">${count || '-'}</td>`; });
-      html += `</tr><tr><td style="border: 1px solid #1F2937; padding: 8px; text-align: left; font-weight: bold;">Perempuan</td>`;
-      sizes.forEach(sz => { const count = globalData.filter(s => s.gender === "Perempuan" && s[keyObj] === sz).length; html += `<td style="border: 1px solid #1F2937; padding: 8px; text-align: center;">${count || '-'}</td>`; });
-      html += `</tr></tbody></table>`;
-      return html;
-    }
 
     function fetchData() {
       fetch(API_URL)
         .then(response => response.json())
         .then(data => {
           globalData = data;
+          // Menyaring data siswa yang aktif (Diterima)
+          activeData = globalData.filter(s => s.statusPendaftaran !== "Mengundurkan Diri");
+
           document.getElementById('loader').style.display = 'none';
           document.getElementById('app-content').style.display = 'block';
           document.getElementById('bottomNav').style.display = 'flex';
+          
           const now = new Date();
           const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
           document.getElementById('last-sync').innerText = "Terakhir diperbarui: " + timeStr + " WIB";
+          
           initDashboard();
           setupDropdown();
+          renderManageList();
         })
         .catch(error => {
           console.error("Error fetching data:", error);
-          document.getElementById('loader-text').innerHTML = "Gagal memuat data.<br>Pastikan koneksi internet stabil & URL API sudah benar.";
+          document.getElementById('loader-text').innerHTML = "Gagal memuat data.<br>Pastikan URL API sudah benar.";
         });
     }
 
@@ -222,16 +235,27 @@
 
     fetchData();
 
-    function switchMenu(viewId, element) { document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none'); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); document.getElementById(viewId).style.display = 'block'; element.classList.add('active'); }
+    function switchMenu(viewId, element) { 
+      document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none'); 
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); 
+      document.getElementById(viewId).style.display = 'block'; 
+      element.classList.add('active'); 
+    }
     
+    // --- DASHBOARD LOGIC (Hanya menghitung siswa aktif) ---
     function initDashboard() { 
-      const dataMasuk = globalData.length; 
-      const dataL = globalData.filter(s => s.gender === "Laki - Laki").length; 
-      const dataP = globalData.filter(s => s.gender === "Perempuan").length; 
-      document.getElementById('prog-text').innerText = `${dataMasuk} / ${TOTAL_KUOTA}`; 
+      const totalKuotaAktif = activeData.length;
+      const dataMasuk = activeData.filter(s => s.sudahIsi).length; 
+      const dataL = activeData.filter(s => s.gender === "Laki - Laki").length; 
+      const dataP = activeData.filter(s => s.gender === "Perempuan").length; 
+      const dataResign = globalData.filter(s => s.statusPendaftaran === "Mengundurkan Diri").length;
+
+      document.getElementById('prog-text').innerText = `${dataMasuk} / ${totalKuotaAktif}`; 
       document.getElementById('stat-l').innerText = dataL; 
       document.getElementById('stat-p').innerText = dataP; 
-      const persentase = (dataMasuk / TOTAL_KUOTA) * 100; 
+      document.getElementById('stat-resign').innerText = dataResign; 
+      
+      const persentase = totalKuotaAktif === 0 ? 0 : (dataMasuk / totalKuotaAktif) * 100; 
       setTimeout(() => { document.getElementById('prog-bar').style.width = `${Math.min(persentase, 100)}%`; }, 300); 
       
       document.getElementById('tabel-rekap-atasan').innerHTML = generateRekapTableHTML('Size Atasan', 'atasan');
@@ -240,19 +264,133 @@
       renderChart('chartAtasan', 'atasan'); 
       renderChart('chartBawahan', 'bawahan'); 
     }
+
+    function generateRekapTableHTML(title, keyObj) {
+      const sizes = [...new Set(activeData.map(s => s[keyObj]).filter(s => s !== "-"))];
+      const sizeOrder = {"S":1, "M":2, "L":3, "XL":4, "XXL":5, "3XL":6, "4XL":7};
+      sizes.sort((a, b) => {
+        let valA = sizeOrder[a.toUpperCase()] || 99;
+        let valB = sizeOrder[b.toUpperCase()] || 99;
+        if (valA === valB) return a.localeCompare(b);
+        return valA - valB;
+      });
+
+      if (sizes.length === 0) return '';
+      let html = `<h4 style="text-align:center; margin-top: 0; margin-bottom: 10px; font-family: sans-serif; color: #374151;">Rekap ${title}</h4><table style="width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 12px; font-family: sans-serif;"><thead><tr><th style="border: 1px solid #1F2937; padding: 8px; background-color: #E5E7EB; text-align: left;">Jenis Kelamin</th>`;
+      sizes.forEach(sz => { html += `<th style="border: 1px solid #1F2937; padding: 8px; background-color: #E5E7EB; text-align: center; width: 45px;">${sz}</th>`; });
+      html += `</tr></thead><tbody><tr><td style="border: 1px solid #1F2937; padding: 8px; text-align: left; font-weight: bold;">Laki - Laki</td>`;
+      sizes.forEach(sz => { const count = activeData.filter(s => s.gender === "Laki - Laki" && s[keyObj] === sz).length; html += `<td style="border: 1px solid #1F2937; padding: 8px; text-align: center;">${count || '-'}</td>`; });
+      html += `</tr><tr><td style="border: 1px solid #1F2937; padding: 8px; text-align: left; font-weight: bold;">Perempuan</td>`;
+      sizes.forEach(sz => { const count = activeData.filter(s => s.gender === "Perempuan" && s[keyObj] === sz).length; html += `<td style="border: 1px solid #1F2937; padding: 8px; text-align: center;">${count || '-'}</td>`; });
+      html += `</tr></tbody></table>`; return html;
+    }
     
-    function renderChart(canvasId, keyObj) { const sizes = [...new Set(globalData.map(s => s[keyObj]).filter(s => s !== "-"))].sort(); const countL = sizes.map(size => globalData.filter(s => s.gender === "Laki - Laki" && s[keyObj] === size).length); const countP = sizes.map(size => globalData.filter(s => s.gender === "Perempuan" && s[keyObj] === size).length); const ctx = document.getElementById(canvasId).getContext('2d'); if(canvasId === 'chartAtasan' && chartAtasanInstance) chartAtasanInstance.destroy(); if(canvasId === 'chartBawahan' && chartBawahanInstance) chartBawahanInstance.destroy(); const newChart = new Chart(ctx, { type: 'bar', data: { labels: sizes, datasets: [ { label: 'Laki-Laki', data: countL, backgroundColor: '#3B82F6', borderRadius: 4 }, { label: 'Perempuan', data: countP, backgroundColor: '#EC4899', borderRadius: 4 } ] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: {size: 11} } }, datalabels: { color: 'white', font: { weight: 'bold', size: 10 }, formatter: Math.round, display: (c) => c.dataset.data[c.dataIndex] > 0 } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } } }); if(canvasId === 'chartAtasan') chartAtasanInstance = newChart; if(canvasId === 'chartBawahan') chartBawahanInstance = newChart; }
+    function renderChart(canvasId, keyObj) { 
+      const sizes = [...new Set(activeData.map(s => s[keyObj]).filter(s => s !== "-"))].sort(); 
+      const countL = sizes.map(size => activeData.filter(s => s.gender === "Laki - Laki" && s[keyObj] === size).length); 
+      const countP = sizes.map(size => activeData.filter(s => s.gender === "Perempuan" && s[keyObj] === size).length); 
+      const ctx = document.getElementById(canvasId).getContext('2d'); 
+      if(canvasId === 'chartAtasan' && chartAtasanInstance) chartAtasanInstance.destroy(); 
+      if(canvasId === 'chartBawahan' && chartBawahanInstance) chartBawahanInstance.destroy(); 
+      
+      const newChart = new Chart(ctx, { type: 'bar', data: { labels: sizes, datasets: [ { label: 'Laki-Laki', data: countL, backgroundColor: '#3B82F6', borderRadius: 4 }, { label: 'Perempuan', data: countP, backgroundColor: '#EC4899', borderRadius: 4 } ] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: {size: 11} } }, datalabels: { color: 'white', font: { weight: 'bold', size: 10 }, formatter: Math.round, display: (c) => c.dataset.data[c.dataIndex] > 0 } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } } }); 
+      if(canvasId === 'chartAtasan') chartAtasanInstance = newChart; 
+      if(canvasId === 'chartBawahan') chartBawahanInstance = newChart; 
+    }
     
+    // --- PENCARIAN LOGIC (Hanya menampilkan siswa aktif) ---
     let filteredList = [];
-    function setupDropdown() { const gender = document.getElementById('genderSelect').value; const input = document.getElementById('comboInput'); document.getElementById('resultCard').style.display = 'none'; input.value = ''; filteredList = gender ? globalData.filter(s => s.gender === gender) : globalData; if (filteredList.length === 0) { input.disabled = true; input.placeholder = "Belum ada data..."; } else { input.disabled = false; input.placeholder = "Ketik atau pilih nama..."; } renderComboList(filteredList); }
+    function setupDropdown() { 
+      const gender = document.getElementById('genderSelect').value; 
+      const input = document.getElementById('comboInput'); 
+      document.getElementById('resultCard').style.display = 'none'; input.value = ''; 
+      
+      // Menggunakan activeData (bukan globalData)
+      filteredList = gender ? activeData.filter(s => s.gender === gender) : activeData; 
+      
+      if (filteredList.length === 0) { input.disabled = true; input.placeholder = "Belum ada data..."; } 
+      else { input.disabled = false; input.placeholder = "Ketik atau pilih nama..."; } 
+      renderComboList(filteredList); 
+    }
+    
     function renderComboList(list) { const listDiv = document.getElementById('comboList'); listDiv.innerHTML = ''; if (list.length === 0) { listDiv.innerHTML = '<div class="combo-item" style="color:#999;">Tidak ditemukan</div>'; return; } list.forEach(s => { const div = document.createElement('div'); div.className = 'combo-item'; div.innerText = s.nama; div.onclick = () => selectName(s); listDiv.appendChild(div); }); }
     function openDropdown() { document.getElementById('comboList').style.display = 'block'; }
     function filterCombo() { const keyword = document.getElementById('comboInput').value.toLowerCase(); const temp = filteredList.filter(s => s.nama.toLowerCase().includes(keyword)); renderComboList(temp); openDropdown(); }
-    function selectName(siswa) { document.getElementById('comboInput').value = siswa.nama; document.getElementById('comboList').style.display = 'none'; document.getElementById('res-nama').innerText = siswa.nama; document.getElementById('res-sekolah').innerText = siswa.sekolah; document.getElementById('res-daerah').innerText = siswa.daerah; document.getElementById('res-tb').innerText = siswa.tb; document.getElementById('res-bb').innerText = siswa.bb; document.getElementById('res-atas').innerText = siswa.atasan; document.getElementById('res-bawah').innerText = siswa.bawahan; document.getElementById('res-lbl-bawah').innerText = siswa.gender === "Laki - Laki" ? "Celana" : "Rok"; document.getElementById('resultCard').style.display = 'block'; }
-    document.addEventListener('click', function(e) { const wrapper = document.querySelector('.combo-wrapper'); if (wrapper && !wrapper.contains(e.target)) { document.getElementById('comboList').style.display = 'none'; } });
     
+    function selectName(siswa) { 
+      document.getElementById('comboInput').value = siswa.nama; 
+      document.getElementById('comboList').style.display = 'none'; 
+      document.getElementById('res-nama').innerText = siswa.nama; 
+      document.getElementById('res-sekolah').innerText = siswa.sekolah; 
+      document.getElementById('res-daerah').innerText = siswa.daerah; 
+      document.getElementById('res-tb').innerText = siswa.tb; 
+      document.getElementById('res-bb').innerText = siswa.bb; 
+      document.getElementById('res-atas').innerText = siswa.atasan; 
+      document.getElementById('res-bawah').innerText = siswa.bawahan; 
+      document.getElementById('res-lbl-bawah').innerText = siswa.gender === "Laki - Laki" ? "Celana" : "Rok"; 
+      document.getElementById('resultCard').style.display = 'block'; 
+    }
+    document.addEventListener('click', function(e) { const wrapper = document.querySelector('.combo-wrapper'); if (wrapper && !wrapper.contains(e.target)) { document.getElementById('comboList').style.display = 'none'; } });
+
+    // --- MANAJEMEN STATUS (FITUR BARU) ---
+    function renderManageList() {
+      const container = document.getElementById('manage-list-container');
+      const keyword = document.getElementById('searchManage').value.toLowerCase();
+      
+      // Tampilkan seluruh 65 siswa dari globalData
+      const filtered = globalData.filter(s => s.nama.toLowerCase().includes(keyword));
+      container.innerHTML = '';
+
+      filtered.forEach(s => {
+        const isResign = s.statusPendaftaran === "Mengundurkan Diri";
+        const div = document.createElement('div');
+        div.className = 'manage-item';
+        div.innerHTML = `
+          <div>
+            <p class="m-name">${s.nama}</p>
+            <p class="m-sub"><i class="fas fa-map-marker-alt"></i> ${s.daerah} &nbsp;|&nbsp; <i class="fas fa-school"></i> ${s.sekolah}</p>
+          </div>
+          <select class="status-select ${isResign ? 'resign' : ''}" onchange="changeStatus('${s.nama}', this)">
+            <option value="Diterima" ${!isResign ? 'selected' : ''}>Diterima</option>
+            <option value="Mengundurkan Diri" ${isResign ? 'selected' : ''}>Mengundurkan Diri</option>
+          </select>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function changeStatus(nama, selectElement) {
+      const newStatus = selectElement.value;
+      const loader = document.getElementById('action-loader');
+      
+      // Validasi ganda mencegah salah klik
+      if(!confirm(`Yakin mengubah status ${nama} menjadi ${newStatus}?`)) {
+        selectElement.value = newStatus === "Diterima" ? "Mengundurkan Diri" : "Diterima";
+        return;
+      }
+
+      loader.style.display = 'flex'; // Munculkan layar loading
+      
+      // Mengirim POST/GET request ke Google Apps Script
+      fetch(`${API_URL}?action=updateStatus&nama=${encodeURIComponent(nama)}&status=${encodeURIComponent(newStatus)}`)
+        .then(r => r.json())
+        .then(res => {
+          if(res.success) {
+            refreshData(); // Download ulang data terbaru (akan menutup loader secara otomatis)
+          } else {
+            alert("Gagal memperbarui status. Coba lagi.");
+            loader.style.display = 'none';
+          }
+        })
+        .catch(err => {
+          alert("Terjadi kesalahan koneksi.");
+          loader.style.display = 'none';
+        });
+    }
+    
+    // --- EKSPOR PDF (Hanya mengekspor siswa aktif) ---
     function exportDataPDF() { 
-      if (globalData.length === 0) { alert("Belum ada data."); return; } 
+      if (activeData.length === 0) { alert("Belum ada data siswa aktif."); return; } 
       const printWindow = window.open('', '_blank'); 
       let htmlContent = `<!DOCTYPE html><html><head><title>Data Seragam SMA Al Muttaqin 2026</title><style>@page { size: A4; margin: 15mm; } body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; color: #000; } h2 { text-align: center; font-family: Arial, sans-serif; font-size: 14pt; margin-bottom: 20px; line-height: 1.3; } .main-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; } .main-table th, .main-table td { border: 1px solid black; padding: 6px 8px; } .main-table th { background-color: #f2f2f2; font-weight: bold; text-align: center; } td.center { text-align: center; } td.left { text-align: left; } * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } .page-break { page-break-before: always; }</style></head><body>`;
       htmlContent += `<h2>REKAPITULASI UKURAN SERAGAM SISWA BARU<br>SMA AL MUTTAQIN TAHUN 2026</h2>`;
@@ -260,7 +398,9 @@
       htmlContent += generateRekapTableHTML('Size Bawahan', 'bawahan');
       htmlContent += `<br><br><h2>RINCIAN DATA SISWA</h2>`;
       htmlContent += `<table class="main-table"><thead><tr><th style="width: 5%;">No.</th><th style="width: 30%;">Nama Lengkap</th><th style="width: 15%;">Jenis Kelamin</th><th style="width: 10%;">Tinggi</th><th style="width: 10%;">Berat</th><th style="width: 15%;">Size Atasan</th><th style="width: 15%;">Size Bawahan</th></tr></thead><tbody>`; 
-      globalData.forEach((row, index) => { 
+      
+      // Iterasi hanya untuk activeData
+      activeData.forEach((row, index) => { 
         let tinggi = row.tb === '-' ? '' : row.tb.replace(' cm', ''); let berat = row.bb === '-' ? '' : row.bb.replace(' kg', ''); 
         htmlContent += `<tr><td class="center">${index + 1}</td><td class="left">${row.nama}</td><td class="center">${row.gender}</td><td class="center">${tinggi}</td><td class="center">${berat}</td><td class="center">${row.atasan}</td><td class="center">${row.bawahan}</td></tr>`; 
       }); 
