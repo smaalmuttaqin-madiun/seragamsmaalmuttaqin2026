@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
-    :root { --primary: #10B981; --primary-dark: #059669; --bg-color: #F3F4F6; --card-bg: #FFFFFF; --text-main: #1F2937; --text-muted: #6B7280; --border: #E5E7EB; --danger: #EF4444; }
+    :root { --primary: #10B981; --primary-dark: #059669; --bg-color: #F3F4F6; --card-bg: #FFFFFF; --text-main: #1F2937; --text-muted: #6B7280; --border: #E5E7EB; --danger: #EF4444; --warning: #F59E0B; }
     * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
     body { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-main); padding-top: 60px; padding-bottom: 80px; }
     
@@ -31,15 +31,22 @@
     .combo-list { display: none; position: absolute; top: 100%; left: 0; width: 100%; max-height: 200px; overflow-y: auto; background: white; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 50; margin-top: 4px; }
     .combo-item { padding: 12px 15px; font-size: 14px; border-bottom: 1px solid #F3F4F6; cursor: pointer; }
     .combo-item:hover { background: #F0FDF4; color: var(--primary-dark); font-weight: 600; }
+    .combo-item.mundur { color: #DC2626; text-decoration: line-through; }
     
-    .result-box { display: none; margin-top: 10px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
-    .result-head { background: var(--primary); color: white; padding: 12px; font-weight: 600; text-align: center; }
+    .result-box { display: none; margin-top: 10px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .result-head { background: var(--primary); color: white; padding: 12px; font-weight: 600; text-align: center; font-size: 18px;}
     .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 15px; background: #FAFAFA; }
     .data-item { background: white; padding: 10px; border-radius: 6px; border: 1px solid var(--border); text-align: center; }
     .data-item.full-width { grid-column: span 2; background: #F8FAFC; border-color: #E2E8F0; }
     .d-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; }
     .d-value { font-size: 16px; font-weight: bold; color: var(--text-main); margin-top: 4px; display: block; }
     
+    .control-panel { background: white; padding: 15px; border-top: 1px solid var(--border); }
+    .status-select { width: 100%; padding: 10px; border-radius: 6px; font-size: 14px; font-weight: bold; border: 2px solid var(--border); outline: none; margin-bottom: 10px; cursor: pointer;}
+    .status-select.resign { color: #DC2626; background: #FEF2F2; border-color: #FECACA; }
+    .status-select.taken { color: #059669; background: #D1FAE5; border-color: #A7F3D0; }
+    .status-select.nottaken { color: #D97706; background: #FEF3C7; border-color: #FDE68A; }
+
     .sync-time { font-size: 11px; color: var(--text-muted); text-align: right; margin-bottom: 10px; font-style: italic; }
     .progress-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
     .progress-bg { height: 12px; background: #E5E7EB; border-radius: 10px; overflow: hidden; }
@@ -48,35 +55,22 @@
     .stat-box { text-align: center; padding: 12px; background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px; }
     .stat-num { font-size: 20px; font-weight: bold; color: var(--primary-dark); }
     .stat-text { font-size: 10px; color: #065F46; text-transform: uppercase; margin-top: 4px; }
-    
-    /* Box Khusus Resign */
     .stat-box.danger { background: #FEF2F2; border-color: #FECACA; }
     .stat-box.danger .stat-num { color: #DC2626; }
     .stat-box.danger .stat-text { color: #991B1B; }
 
-    /* List Manajemen Siswa */
-    .manage-list { display: flex; flex-direction: column; gap: 12px; }
-    .manage-item { background: #FAFAFA; border: 1px solid var(--border); padding: 15px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px; }
-    .m-name { font-size: 15px; font-weight: bold; color: var(--primary-dark); margin: 0; }
-    .m-sub { font-size: 12px; color: var(--text-muted); margin: 0; }
-    .status-select { padding: 8px; border-radius: 6px; font-size: 13px; font-weight: bold; border: 1px solid var(--border); outline: none; margin-bottom:0; }
-    .status-select.resign { color: #DC2626; background: #FEF2F2; border-color: #FECACA; }
-    
     .chart-container { position: relative; height: 230px; width: 100%; margin-top: 15px;}
     .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; }
     
-    .btn-action { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
-    .btn-export { background: var(--primary); color: white; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2); }
+    .btn-action { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; background: var(--primary); color: white; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2); }
     
     .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card-bg); display: flex; justify-content: space-around; box-shadow: 0 -2px 10px rgba(0,0,0,0.08); padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
-    .nav-item { flex: 1; text-align: center; padding: 10px 0; color: var(--text-muted); font-size: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-    .nav-item i { display: block; font-size: 18px; margin-bottom: 4px; }
+    .nav-item { flex: 1; text-align: center; padding: 12px 0; color: var(--text-muted); font-size: 11px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .nav-item i { display: block; font-size: 20px; margin-bottom: 4px; }
     .nav-item.active { color: var(--primary); }
     
     #loader { text-align: center; padding: 50px 20px; color: var(--text-muted); font-weight: 600; }
-    
-    /* Overlay Loading saat ganti status */
-    #action-loader { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(255,255,255,0.8); z-index: 999; justify-content: center; align-items: center; flex-direction: column; color: var(--primary-dark); font-weight: bold; }
+    #action-loader { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(255,255,255,0.8); z-index: 999; justify-content: center; align-items: center; flex-direction: column; color: var(--primary-dark); font-weight: bold; text-align:center; padding: 20px;}
   </style>
 </head>
 <body>
@@ -87,7 +81,7 @@
   </div>
 
   <div id="loader"><i class="fas fa-spinner fa-spin fa-2x"></i><br><br><span id="loader-text">Menarik Data Terbaru...</span></div>
-  <div id="action-loader"><i class="fas fa-circle-notch fa-spin fa-3x"></i><br><br>Memperbarui Status...</div>
+  <div id="action-loader"><i class="fas fa-circle-notch fa-spin fa-3x"></i><br><br><span id="action-text">Memperbarui Data...</span></div>
 
   <div class="main-container" id="app-content" style="display:none;">
     
@@ -123,11 +117,11 @@
       </div>
     </div>
 
-    <!-- TAB 2: PENCARIAN -->
+    <!-- TAB 2: PENCARIAN & KONTROL (GABUNGAN) -->
     <div id="view-cek" class="view-section" style="display:none;">
       <div class="card">
-        <h3 class="card-title"><i class="fas fa-search"></i> Cek Data Siswa</h3>
-        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Data yang tampil di sini hanya siswa yang masih aktif (Diterima).</p>
+        <h3 class="card-title"><i class="fas fa-search"></i> Cari & Kelola Siswa</h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Cari nama siswa untuk melihat ukuran dan memperbarui status pendaftaran/pengambilan seragam.</p>
 
         <label>1. Filter Berdasarkan Gender</label>
         <select id="genderSelect" onchange="setupDropdown()">
@@ -135,6 +129,7 @@
           <option value="Laki - Laki">Laki - Laki</option>
           <option value="Perempuan">Perempuan</option>
         </select>
+        
         <label>2. Cari atau Pilih Nama Siswa</label>
         <div class="combo-wrapper">
           <input type="text" id="comboInput" class="combo-input" placeholder="Ketik atau pilih nama..." autocomplete="off" onfocus="openDropdown()" onkeyup="filterCombo()" disabled>
@@ -152,43 +147,32 @@
             <div class="data-item"><span class="d-label">Atasan</span><span class="d-value" id="res-atas">-</span></div>
             <div class="data-item"><span class="d-label" id="res-lbl-bawah">Bawahan</span><span class="d-value" id="res-bawah">-</span></div>
           </div>
+          
+          <!-- PANEL KONTROL STATUS (BARU) -->
+          <div class="control-panel">
+             <label><i class="fas fa-user-check"></i> Status Pendaftaran</label>
+             <select id="ctrl-pendaftaran" class="status-select" onchange="submitUpdate('pendaftaran', this)">
+               <option value="Diterima">Diterima</option>
+               <option value="Mengundurkan Diri">Mengundurkan Diri</option>
+             </select>
+
+             <label style="margin-top: 15px;"><i class="fas fa-box-open"></i> Status Pengambilan Seragam</label>
+             <select id="ctrl-pengambilan" class="status-select" onchange="submitUpdate('pengambilan', this)">
+               <option value="Belum Diambil">Belum Diambil</option>
+               <option value="Sudah Diambil">Sudah Diambil</option>
+             </select>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- TAB 3: MANAJEMEN STATUS (DI-UPGRADE) -->
-    <div id="view-manajemen" class="view-section" style="display:none;">
-      <div class="card">
-        <h3 class="card-title"><i class="fas fa-users-cog"></i> Kelola Status Pendaftaran</h3>
-        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Pilih data siswa (termasuk yang sudah mundur) untuk mengubah status mereka.</p>
-        
-        <label>1. Filter Berdasarkan Gender</label>
-        <select id="manageGenderSelect" onchange="setupManageDropdown()">
-          <option value="">-- Semua Gender --</option>
-          <option value="Laki - Laki">Laki - Laki</option>
-          <option value="Perempuan">Perempuan</option>
-        </select>
-        
-        <label>2. Cari atau Pilih Nama Siswa</label>
-        <div class="combo-wrapper">
-          <input type="text" id="manageComboInput" class="combo-input" placeholder="Ketik atau pilih nama..." autocomplete="off" onfocus="openManageDropdown()" onkeyup="filterManageCombo()" disabled>
-          <i class="fas fa-chevron-down combo-icon"></i>
-          <div id="manageComboList" class="combo-list"></div>
-        </div>
-        
-        <div class="manage-list" id="manage-list-container">
-          <!-- List siswa akan muncul di sini berdasarkan filter dropdown -->
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 4: EKSPOR PDF -->
+    <!-- TAB 3: EKSPOR PDF -->
     <div id="view-export" class="view-section" style="display:none;">
       <div class="card" style="text-align: center; padding: 40px 20px;">
         <i class="fas fa-print fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
         <h3 style="margin: 0 0 10px 0;">Cetak Laporan (PDF)</h3>
-        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 25px;">Data siswa yang Mengundurkan Diri telah dikecualikan dari cetakan ini.</p>
-        <button class="btn-action btn-export" onclick="exportDataPDF()"><i class="fas fa-file-pdf"></i> Buka Print Preview</button>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 25px;">Data siswa yang Mengundurkan Diri otomatis dikecualikan dari cetakan ini.</p>
+        <button class="btn-action" onclick="exportDataPDF()"><i class="fas fa-file-pdf"></i> Buka Print Preview</button>
       </div>
     </div>
 
@@ -196,8 +180,7 @@
 
   <div class="bottom-nav" id="bottomNav" style="display:none;">
     <div class="nav-item active" onclick="switchMenu('view-dash', this)"><i class="fas fa-chart-pie"></i><span>Ringkasan</span></div>
-    <div class="nav-item" onclick="switchMenu('view-cek', this)"><i class="fas fa-search"></i><span>Pencarian</span></div>
-    <div class="nav-item" onclick="switchMenu('view-manajemen', this)"><i class="fas fa-user-edit"></i><span>Status</span></div>
+    <div class="nav-item" onclick="switchMenu('view-cek', this)"><i class="fas fa-search"></i><span>Cari & Kelola</span></div>
     <div class="nav-item" onclick="switchMenu('view-export', this)"><i class="fas fa-print"></i><span>Cetak</span></div>
   </div>
 
@@ -212,6 +195,9 @@
     let activeData = []; 
     let chartAtasanInstance = null;
     let chartBawahanInstance = null;
+    
+    // Variabel untuk menyimpan siswa yang sedang dibuka di Pencarian
+    let selectedStudentName = "";
 
     function fetchData() {
       fetch(API_URL)
@@ -229,8 +215,13 @@
           document.getElementById('last-sync').innerText = "Terakhir diperbarui: " + timeStr + " WIB";
           
           initDashboard();
-          setupDropdown();         // Untuk tab pencarian
-          setupManageDropdown();   // Untuk tab status manajemen (BARU)
+          setupDropdown(); 
+
+          // Jika sebelumnya ada siswa yang dibuka, refresh datanya di layar
+          if(selectedStudentName !== "") {
+             const updatedStudent = globalData.find(s => s.nama === selectedStudentName);
+             if(updatedStudent) selectName(updatedStudent);
+          }
         })
         .catch(error => {
           console.error("Error fetching data:", error);
@@ -242,6 +233,7 @@
       document.getElementById('app-content').style.display = 'none';
       document.getElementById('loader').style.display = 'block';
       document.getElementById('resultCard').style.display = 'none';
+      selectedStudentName = ""; // Reset pilihan
       fetchData();
     }
 
@@ -306,143 +298,126 @@
       if(canvasId === 'chartBawahan') chartBawahanInstance = newChart; 
     }
     
-    // --- TAB 2: PENCARIAN LOGIC ---
+    // --- TAB 2: PENCARIAN & MANAJEMEN LOGIC ---
     let filteredList = [];
     function setupDropdown() { 
       const gender = document.getElementById('genderSelect').value; 
       const input = document.getElementById('comboInput'); 
-      document.getElementById('resultCard').style.display = 'none'; input.value = ''; 
       
-      // Pencarian HANYA mencari dari siswa yang Aktif
-      filteredList = gender ? activeData.filter(s => s.gender === gender) : activeData; 
+      // Pencarian menampilkan GLOBAL DATA agar panitia bisa menemukan siswa yang terlanjur mundur
+      filteredList = gender ? globalData.filter(s => s.gender === gender) : globalData; 
       
       if (filteredList.length === 0) { input.disabled = true; input.placeholder = "Belum ada data..."; } 
       else { input.disabled = false; input.placeholder = "Ketik atau pilih nama..."; } 
       renderComboList(filteredList); 
     }
-    function renderComboList(list) { const listDiv = document.getElementById('comboList'); listDiv.innerHTML = ''; if (list.length === 0) { listDiv.innerHTML = '<div class="combo-item" style="color:#999;">Tidak ditemukan</div>'; return; } list.forEach(s => { const div = document.createElement('div'); div.className = 'combo-item'; div.innerText = s.nama; div.onclick = () => selectName(s); listDiv.appendChild(div); }); }
+    
+    function renderComboList(list) { 
+      const listDiv = document.getElementById('comboList'); 
+      listDiv.innerHTML = ''; 
+      if (list.length === 0) { listDiv.innerHTML = '<div class="combo-item" style="color:#999;">Tidak ditemukan</div>'; return; } 
+      list.forEach(s => { 
+        const div = document.createElement('div'); 
+        div.className = 'combo-item'; 
+        
+        // Beri tanda coret merah jika siswa tersebut statusnya Mengundurkan Diri
+        if (s.statusPendaftaran === "Mengundurkan Diri") {
+           div.classList.add('mundur');
+           div.innerHTML = `${s.nama} <span style="font-size:10px;">(Mundur)</span>`;
+        } else {
+           div.innerText = s.nama; 
+        }
+        
+        div.onclick = () => selectName(s); 
+        listDiv.appendChild(div); 
+      }); 
+    }
     function openDropdown() { document.getElementById('comboList').style.display = 'block'; }
     function filterCombo() { const keyword = document.getElementById('comboInput').value.toLowerCase(); const temp = filteredList.filter(s => s.nama.toLowerCase().includes(keyword)); renderComboList(temp); openDropdown(); }
+    
     function selectName(siswa) { 
-      document.getElementById('comboInput').value = siswa.nama; document.getElementById('comboList').style.display = 'none'; 
-      document.getElementById('res-nama').innerText = siswa.nama; document.getElementById('res-sekolah').innerText = siswa.sekolah; document.getElementById('res-daerah').innerText = siswa.daerah; document.getElementById('res-tb').innerText = siswa.tb; document.getElementById('res-bb').innerText = siswa.bb; document.getElementById('res-atas').innerText = siswa.atasan; document.getElementById('res-bawah').innerText = siswa.bawahan; document.getElementById('res-lbl-bawah').innerText = siswa.gender === "Laki - Laki" ? "Celana" : "Rok"; 
+      selectedStudentName = siswa.nama; // Simpan memori siapa yang sedang dibuka
+      document.getElementById('comboInput').value = siswa.nama; 
+      document.getElementById('comboList').style.display = 'none'; 
+      
+      // Mengisi Data ke Kartu
+      document.getElementById('res-nama').innerText = siswa.nama; 
+      document.getElementById('res-sekolah').innerText = siswa.sekolah; 
+      document.getElementById('res-daerah').innerText = siswa.daerah; 
+      document.getElementById('res-tb').innerText = siswa.tb; 
+      document.getElementById('res-bb').innerText = siswa.bb; 
+      document.getElementById('res-atas').innerText = siswa.atasan; 
+      document.getElementById('res-bawah').innerText = siswa.bawahan; 
+      document.getElementById('res-lbl-bawah').innerText = siswa.gender === "Laki - Laki" ? "Celana" : "Rok"; 
+      
+      // Mengatur Select Dropdown Status agar sesuai dengan database
+      const selectDaftar = document.getElementById('ctrl-pendaftaran');
+      selectDaftar.value = siswa.statusPendaftaran;
+      updateSelectColor(selectDaftar, 'pendaftaran');
+
+      const selectAmbil = document.getElementById('ctrl-pengambilan');
+      selectAmbil.value = siswa.statusPengambilan;
+      updateSelectColor(selectAmbil, 'pengambilan');
+
       document.getElementById('resultCard').style.display = 'block'; 
     }
 
-    // --- TAB 3: MANAJEMEN STATUS LOGIC (BARU) ---
-    let manageFilteredList = [];
-    
-    function setupManageDropdown() {
-      const gender = document.getElementById('manageGenderSelect').value;
-      const input = document.getElementById('manageComboInput');
-      input.value = '';
-
-      // Manajemen menampilkan GLOBAL DATA (Agar siswa yang mundur bisa di-Diterima-kan lagi)
-      manageFilteredList = gender ? globalData.filter(s => s.gender === gender) : globalData;
-
-      if (manageFilteredList.length === 0) {
-        input.disabled = true; input.placeholder = "Belum ada data...";
-      } else {
-        input.disabled = false; input.placeholder = "Ketik atau pilih nama...";
-      }
-
-      renderManageComboList(manageFilteredList);
-      renderManageCards(manageFilteredList); // Tampilkan kartu daftar siswa
+    // Fungsi Mewarnai Dropdown
+    function updateSelectColor(selectElement, type) {
+       selectElement.className = "status-select"; // Reset
+       if (type === 'pendaftaran' && selectElement.value === "Mengundurkan Diri") {
+           selectElement.classList.add("resign");
+       }
+       if (type === 'pengambilan') {
+           if (selectElement.value === "Sudah Diambil") selectElement.classList.add("taken");
+           if (selectElement.value === "Belum Diambil") selectElement.classList.add("nottaken");
+       }
     }
 
-    function renderManageComboList(list) {
-      const listDiv = document.getElementById('manageComboList');
-      listDiv.innerHTML = '';
-      if (list.length === 0) {
-        listDiv.innerHTML = '<div class="combo-item" style="color:#999;">Tidak ditemukan</div>'; return;
-      }
-      list.forEach(s => {
-        const div = document.createElement('div');
-        div.className = 'combo-item'; div.innerText = s.nama;
-        div.onclick = () => selectManageName(s);
-        listDiv.appendChild(div);
-      });
-    }
-
-    function openManageDropdown() { document.getElementById('manageComboList').style.display = 'block'; }
-    
-    function filterManageCombo() {
-      const keyword = document.getElementById('manageComboInput').value.toLowerCase();
-      const temp = manageFilteredList.filter(s => s.nama.toLowerCase().includes(keyword));
-      renderManageComboList(temp);
-      renderManageCards(temp); // Filter list kartu sekalian secara Live
-      openManageDropdown();
-    }
-
-    function selectManageName(siswa) {
-      document.getElementById('manageComboInput').value = siswa.nama;
-      document.getElementById('manageComboList').style.display = 'none';
-      renderManageCards([siswa]); // Tampilkan hanya 1 kartu siswa yang dipilih
-    }
-
-    function renderManageCards(listToRender) {
-      const container = document.getElementById('manage-list-container');
-      container.innerHTML = '';
-      if(listToRender.length === 0) {
-          container.innerHTML = '<p style="text-align:center; color:#999; font-size:13px;">Siswa tidak ditemukan.</p>';
-          return;
-      }
-      listToRender.forEach(s => {
-        const isResign = s.statusPendaftaran === "Mengundurkan Diri";
-        const div = document.createElement('div');
-        div.className = 'manage-item';
-        div.innerHTML = `
-          <div>
-            <p class="m-name">${s.nama}</p>
-            <p class="m-sub"><i class="fas fa-map-marker-alt"></i> ${s.daerah} &nbsp;|&nbsp; <i class="fas fa-school"></i> ${s.sekolah}</p>
-          </div>
-          <select class="status-select ${isResign ? 'resign' : ''}" onchange="changeStatus('${s.nama}', this)">
-            <option value="Diterima" ${!isResign ? 'selected' : ''}>Diterima</option>
-            <option value="Mengundurkan Diri" ${isResign ? 'selected' : ''}>Mengundurkan Diri</option>
-          </select>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    // Fungsi Mengirim Perubahan Status ke Google Apps Script API
-    function changeStatus(nama, selectElement) {
-      const newStatus = selectElement.value;
+    // Eksekusi Update ke Database
+    function submitUpdate(fieldType, selectElement) {
+      const newValue = selectElement.value;
       const loader = document.getElementById('action-loader');
+      const actionText = document.getElementById('action-text');
       
-      if(!confirm(`Yakin mengubah status ${nama} menjadi ${newStatus}?`)) {
-        selectElement.value = newStatus === "Diterima" ? "Mengundurkan Diri" : "Diterima";
+      const promptField = fieldType === 'pendaftaran' ? 'Status Pendaftaran' : 'Status Pengambilan';
+      
+      if(!confirm(`Yakin mengubah ${promptField} untuk ${selectedStudentName} menjadi "${newValue}"?`)) {
+        // Jika batal, kembalikan ke nilai sebelumnya dengan merender ulang kartu
+        const revertStudent = globalData.find(s => s.nama === selectedStudentName);
+        selectName(revertStudent);
         return;
       }
 
+      actionText.innerText = `Menyimpan Perubahan ${promptField}...`;
       loader.style.display = 'flex'; 
-      fetch(`${API_URL}?action=updateStatus&nama=${encodeURIComponent(nama)}&status=${encodeURIComponent(newStatus)}`)
+      
+      fetch(`${API_URL}?action=updateField&nama=${encodeURIComponent(selectedStudentName)}&field=${fieldType}&value=${encodeURIComponent(newValue)}`)
         .then(r => r.json())
         .then(res => {
           if(res.success) {
-            refreshData(); 
+            // Tarik ulang data secara diam-diam untuk me-refresh dashboard & memori
+            fetchData(); 
           } else {
             alert("Gagal memperbarui status. Coba lagi.");
             loader.style.display = 'none';
           }
         })
         .catch(err => {
-          alert("Terjadi kesalahan koneksi saat mengirim data.");
+          alert("Terjadi kesalahan jaringan.");
           loader.style.display = 'none';
         });
     }
 
     // Tutup dropdown jika klik sembarang tempat
     document.addEventListener('click', function(e) { 
-      document.querySelectorAll('.combo-wrapper').forEach(wrapper => {
-         if (!wrapper.contains(e.target)) {
-             const list = wrapper.querySelector('.combo-list');
-             if(list) list.style.display = 'none';
-         }
-      });
+      const wrapper = document.querySelector('.combo-wrapper'); 
+      if (wrapper && !wrapper.contains(e.target)) { 
+        document.getElementById('comboList').style.display = 'none'; 
+      } 
     });
 
-    // --- TAB 4: EKSPOR PDF ---
+    // --- TAB 3: EKSPOR PDF ---
     function exportDataPDF() { 
       if (activeData.length === 0) { alert("Belum ada data siswa aktif."); return; } 
       const printWindow = window.open('', '_blank'); 
@@ -451,10 +426,10 @@
       htmlContent += generateRekapTableHTML('Size Atasan', 'atasan');
       htmlContent += generateRekapTableHTML('Size Bawahan', 'bawahan');
       htmlContent += `<br><br><h2>RINCIAN DATA SISWA</h2>`;
-      htmlContent += `<table class="main-table"><thead><tr><th style="width: 5%;">No.</th><th style="width: 30%;">Nama Lengkap</th><th style="width: 15%;">Jenis Kelamin</th><th style="width: 10%;">Tinggi</th><th style="width: 10%;">Berat</th><th style="width: 15%;">Size Atasan</th><th style="width: 15%;">Size Bawahan</th></tr></thead><tbody>`; 
+      htmlContent += `<table class="main-table"><thead><tr><th style="width: 5%;">No.</th><th style="width: 25%;">Nama Lengkap</th><th style="width: 10%;">L/P</th><th style="width: 15%;">Atasan</th><th style="width: 15%;">Bawahan</th><th style="width: 30%;">Status Pengambilan</th></tr></thead><tbody>`; 
       activeData.forEach((row, index) => { 
-        let tinggi = row.tb === '-' ? '' : row.tb.replace(' cm', ''); let berat = row.bb === '-' ? '' : row.bb.replace(' kg', ''); 
-        htmlContent += `<tr><td class="center">${index + 1}</td><td class="left">${row.nama}</td><td class="center">${row.gender}</td><td class="center">${tinggi}</td><td class="center">${berat}</td><td class="center">${row.atasan}</td><td class="center">${row.bawahan}</td></tr>`; 
+        let lp = row.gender === "Laki - Laki" ? "L" : "P";
+        htmlContent += `<tr><td class="center">${index + 1}</td><td class="left">${row.nama}</td><td class="center">${lp}</td><td class="center">${row.atasan}</td><td class="center">${row.bawahan}</td><td class="center">${row.statusPengambilan}</td></tr>`; 
       }); 
       htmlContent += `</tbody></table><script>window.onload = function() { window.print(); }<\/script></body></html>`; 
       printWindow.document.write(htmlContent); printWindow.document.close(); 
